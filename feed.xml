@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Big Ball of Code</title>
+		<description>Thomas Presthus' Big Ball of Code Blog</description>
+		<link>http://blogs.encodia.no/tpresthus</link>
+		<atom:link href="http://blogs.encodia.no/tpresthus/feed.xml" rel="self" type="application/rss+xml" />
+		
+		<item>
+			<title>First post!</title>
+			<description>&lt;p&gt;Recently I decided to start a new blog. I&amp;#39;ve been blogging previously, but not really in a technical context. My previous blog was focused on politics, economics and society. Although I&amp;#39;m still interested in those topics, I feel more like writing up some technical stuff now.&lt;/p&gt;
+
+&lt;p&gt;So what am I going to write about? Probably quite a few different things. I&amp;#39;m planning on telling you about my experiences - both previous and current - with differente programming languages, methods, archicture and projects.&lt;/p&gt;
+
+&lt;p&gt;Right now I&amp;#39;m working on a Proof of Concept project using Python for prototyping and exploring the domain of the concept. That&amp;#39;ll probably be the first thing to get its own post.&lt;/p&gt;
+
+&lt;p&gt;Until then!&lt;/p&gt;
+</description>
+			<pubDate>Sat, 21 Dec 2013 12:45:45 +0000</pubDate>
+			<link>http://blogs.encodia.no/tpresthus/blog/2013/12/21/first-post.html</link>
+			<guid isPermaLink="true">http://blogs.encodia.no/tpresthus/blog/2013/12/21/first-post.html</guid>
+		</item>
+		
+	</channel>
+</rss>
