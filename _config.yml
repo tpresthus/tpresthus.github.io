@@ -1,6 +1,6 @@
 name: Big Ball of Code
 description: Thomas Presthus' Big Ball of Code Blog
-url: http://blogofcode.com
+url: http://www.blogofcode.com
 markdown: redcarpet
 pygments: true
 destination: ../tpresthus.github.io/
