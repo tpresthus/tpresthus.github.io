@@ -19,7 +19,7 @@ body {
   text-align: center;
 }
 
-h3, h4, h5, h6 {
+h4, h5, h6 {
   font-size: 100%; }
 
 h1 { 
@@ -30,6 +30,8 @@ h1 {
 }
 
 h2 { font-family: Ubuntu, sans-serif; font-size: 2em; }
+h3 { font-family: Ubuntu, sans-serif; font-size: 1.4em; }
+
 
 p { margin: 1em 0; }
 
