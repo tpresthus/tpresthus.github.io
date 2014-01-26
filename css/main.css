@@ -51,6 +51,7 @@ a:visited { color: #a0a; }
 
 .posts li {
   line-height: 1.75em;
+  margin-bottom: 2.5em;
 }
 
 .posts li h2 a {
