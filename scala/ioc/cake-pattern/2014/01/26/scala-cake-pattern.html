@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>The Cake Pattern</title>
+        <meta name="viewport" content="width=device-width">
+
+	<link href="http://fonts.googleapis.com/css?family=Merriweather:400,700|Ubuntu:400" rel="stylesheet">
+	<link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">Big Ball of Code</a></h1>
+            <span>- by Thomas Presthus</span>
+            <a class="extra" href="/">home</a>
+          </div>
+
+          <h2>The Cake Pattern</h2>
+<p class="meta">26 Jan 2014</p>
+
+<div class="post">
+<p>The past few months I&#39;ve been toying around with the Scala programming language. My interest in Scala probably started with my currenct contract engaging me in developing on a Java-based stack. As I&#39;m not a big fan of Java&#39;s code noise and verbosity, I started looking at other JVM languages. Functional Programming has also been something that I wanted to look more into, so Scala seemed like a good start.</p>
+
+<p>After having done quite a lot of playing around with pattern matching and other cool aspects of Scala I got tired of writing small playground applications and decided it was about time to write something closer to a real world application. Now, the real world is saturated with complexity and complexity is a well-known application killer. Thus many smart people have defined principles for helping developers deal with complexity in simpler ways. Some of these principles have been gathered into the SOLID acronym: Single Responsibility principle, Open/Closed principle, Liskov Substitution principle, Interface Segregation principle and the <strong>Dependency Inversion principle</strong>.</p>
+
+<p>I won&#39;t go into detail about any of these principles today, but rather talk about how we can solve Dependency Inversion in scala. Dependency Inversion can be summarized as having details depend upon abstractions (and not upon other details), as well as having abstractions not depend upon details.</p>
+
+<p>Dependency Inversion is often solved through IoC - Inversion of Control, whereas Dependency Injection and Service Locating is two known patterns. The latter is considered an anti-pattern, while Dependency Injection has gained widespread usage.</p>
+
+<p>Dependency Injection often looks like this in Java:</p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">OrderRepository</span> <span class="o">{</span>
+    <span class="n">Order</span> <span class="nf">getOrderBy</span><span class="o">(</span><span class="kt">int</span> <span class="n">number</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MysqlOrderRepository</span> <span class="o">:</span> <span class="n">OrderRepository</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Order</span> <span class="nf">getOrderBy</span><span class="o">(</span><span class="kt">int</span> <span class="n">number</span><span class="o">)</span> <span class="o">{</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">UseCase</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">OrderRepository</span> <span class="n">_orders</span><span class="o">;</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="kd">public</span> <span class="nf">UseCase</span><span class="o">(</span><span class="n">OrderRepository</span> <span class="n">orderRepository</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">_orders</span> <span class="o">=</span> <span class="n">orderRepository</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">doSomething</span><span class="o">(</span><span class="kt">int</span> <span class="n">ordernumber</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">_orders</span><span class="o">.</span><span class="na">getOrderBy</span><span class="o">(</span><span class="n">ordernumber</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>Here we are using Spring as an IoC container. Basically we register <em>MysqlOrderRepository</em> as a candidate for being injected as <em>OrderRepository</em>, and signal that <em>UseCase</em> needs an OrderRepository to function. When we load up an instance of <em>UseCase</em>, Spring will automagically pass an instace of MysqlOrderRepository into it.</p>
+
+<p>This might look all fine and dandy, but it sure gets complicated when you start having multiple implementations that you want to use in test- and production situations. And because it&#39;s so easy to use Autowired, it&#39;s normal to end up with lots of nested dependencies. Nested dependencies are allright in some, rare scenarios. Usually, though, having lots of nested dependencies is an indication that you&#39;re doing something wrong.</p>
+
+<p>In Scala, though, we can use the <em>Cake Pattern</em> to explicitly define our dependencies, and wiring them up just as we need them. I think this makes a code base far easier to read and understand, because you can immediatly see what&#39;s going on.</p>
+
+<p>Let&#39;s go ahead and try implementing our example from before in Scala. First we create our OrderRepository:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">OrderRepository</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">getOrderBy</span><span class="o">(</span><span class="n">number</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Order</span> <span class="o">{</span>
+    <span class="kt">println</span><span class="o">(</span><span class="err">&quot;</span><span class="kt">Getting</span> <span class="kt">order</span> <span class="kt">by</span> <span class="err">&quot;</span> <span class="kt">+</span> <span class="kt">number</span><span class="o">)</span>
+    <span class="kt">Order</span><span class="o">(</span><span class="kt">number</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>Of course we could have extracted this into a trait. That would make the code look more like the Java example, but as we&#39;re dealing with a pretty simple case here, I simply didn&#39;t find it to useful to split it further.</p>
+
+<p>Next up is our UseCase:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">UseCase</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">doSomething</span><span class="o">(</span><span class="n">orderNumber</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">order</span> <span class="k">=</span> <span class="n">orderRepository</span><span class="o">.</span><span class="n">getOrderBy</span><span class="o">(</span><span class="n">orderNumber</span><span class="o">)</span>
+    <span class="n">println</span><span class="o">(</span><span class="s">&quot;Doing something with &quot;</span> <span class="o">+</span> <span class="n">order</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>As you can see, we&#39;re now referencing an <em>orderRepository</em> that has a function <em>getOrderBy(x: Int)</em>. How is this even gonna compile, you may ask? Well, it won&#39;t yet. This is where the cake pattern enters. </p>
+
+<p>First we wrap our dependency - the OrderRepository - into a trait:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">trait</span> <span class="nc">OrderRepositoryComponent</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">orderRepository</span><span class="k">:</span> <span class="kt">OrderRepository</span>
+
+  <span class="k">class</span> <span class="nc">OrderRepository</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">getOrderBy</span><span class="o">(</span><span class="n">number</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Order</span> <span class="o">{</span>
+      <span class="kt">println</span><span class="o">(</span><span class="err">&quot;</span><span class="kt">Getting</span> <span class="kt">order</span> <span class="kt">by</span> <span class="err">&quot;</span> <span class="kt">+</span> <span class="kt">number</span><span class="o">)</span>
+      <span class="kt">Order</span><span class="o">(</span><span class="kt">number</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>Here we enclose the repository, and define an abstract field of OrderRepository.</p>
+
+<p>Now we&#39;re gonna look at the UseCase again, which is the consumer of our dependency. In order to have our OrderRepository injected into it, we&#39;ll enclose it in a trait of it&#39;s own, and then use a self-type annotation to declare our dependency:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">trait</span> <span class="nc">UseCaseComponent</span> <span class="o">{</span> 
+<span class="k">this:</span> <span class="kt">OrderRepositoryComponent</span> <span class="o">=&gt;</span>
+  <span class="k">val</span> <span class="n">useCase</span><span class="k">:</span> <span class="kt">UseCase</span>
+
+  <span class="k">class</span> <span class="nc">UseCase</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">doSomething</span><span class="o">(</span><span class="n">orderNumber</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">val</span> <span class="n">order</span> <span class="k">=</span> <span class="n">orderRepository</span><span class="o">.</span><span class="n">getOrderBy</span><span class="o">(</span><span class="n">orderNumber</span><span class="o">)</span>
+      <span class="n">println</span><span class="o">(</span><span class="s">&quot;Doing something with &quot;</span> <span class="o">+</span> <span class="n">order</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>What&#39;s interesting here is this snippet:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">this:</span> <span class="kt">OrderRepositoryComponent</span> <span class="o">=&gt;</span>
+</code></pre></div>
+
+<p>That&#39;s what we call a self-type annotation, and basically it means that this trait has to be mixed-in with an OrderRepositoryComponent trait.</p>
+
+<p>I guess it&#39;s time to wire it all up. In order to regain some common ground, we&#39;ll wire these components together in a registry:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">object</span> <span class="nc">Registry</span> <span class="k">extends</span>
+  <span class="nc">UseCaseComponent</span> <span class="k">with</span>
+  <span class="nc">OrderRepositoryComponent</span>
+<span class="o">{</span>
+  <span class="k">val</span> <span class="n">orderRepository</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">OrderRepository</span>
+  <span class="k">val</span> <span class="n">useCase</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">UseCase</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>What we&#39;ve gained now, is removing the instantion of dependencies from our concrete implementations, and into a registry object. This could well be your top-level service or the like. Inside of it, we have the complete freedom and flexibility to instantiate our dependencies as we need to. </p>
+
+<p>We also make our dependencies explicit and visible from the entry-point of our code. There is no need for checking Spring XML configuration files, or having your IDE &quot;find all implementations&quot; of OrderRepository. We can see from the start, that orderRepository is instantiated as new OrderRepository. This is even more powerful when you have multiple implementations of OrderRepository, of course.</p>
+
+<p>What&#39;s even cooler, is that we can simply compose different objects to control our dependencies in different scenarios - e.g. for testing. We can now do something like this:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">UseCaseSuite</span> <span class="k">extends</span> <span class="nc">TestNGSuite</span> 
+  <span class="k">with</span> <span class="nc">UseCaseComponent</span> 
+  <span class="k">with</span> <span class="nc">OrderRepositoryComponent</span>
+<span class="o">{</span>
+  <span class="k">val</span> <span class="n">orderRepository</span> <span class="k">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">OrderRepository</span><span class="o">])</span>
+
+  <span class="nd">@Test</span>
+  <span class="k">def</span> <span class="n">doSomething</span><span class="o">()</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">useCase</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">UseCase</span>
+    
+    <span class="n">useCase</span><span class="o">.</span><span class="n">doSomething</span><span class="o">(</span><span class="mi">5</span><span class="o">)</span>
+
+    <span class="c1">// assert..</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>Here we&#39;ve mocked away our orderRepository, while creating a fresh UseCase for testing. Pretty elegant, pretty neat.</p>
+
+</div>
+
+<div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'ballofcode'; 
+	var disqus_identifier = '/scala/ioc/cake-pattern/2014/01/26/scala-cake-pattern';
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+</div>
+
+
+          <div class="footer">
+            <div class="contact">
+              <p>
+                Thomas Presthus<br />
+                Consultant and owner, Erus Encodia AS<br />
+                thomas@encodia.no
+              </p>
+            </div>
+            <div class="contact">
+              <p>
+                <a href="https://twitter.com/presthus">twitter.com/presthus</a><br />
+              </p>
+            </div>
+          </div>
+        </div>
+
+    </body>
+</html>
