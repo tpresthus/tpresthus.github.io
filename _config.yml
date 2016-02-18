@@ -1,7 +1,7 @@
 name: Big Ball of Code
 description: Thomas Presthus' Big Ball of Code Blog
 url: http://www.ballofcode.com
-markdown: redcarpet
+markdown: kramdown
 lsi: false
 safe: true
 incremental: false
