@@ -3,4 +3,3 @@ description: Thomas Presthus' Big Ball of Code Blog
 url: http://www.ballofcode.com
 markdown: redcarpet
 pygments: true
-destination: ../tpresthus.github.io/
