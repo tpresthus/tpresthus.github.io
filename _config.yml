@@ -2,4 +2,9 @@ name: Big Ball of Code
 description: Thomas Presthus' Big Ball of Code Blog
 url: http://www.ballofcode.com
 markdown: redcarpet
-pygments: true
+lsi: false
+safe: true
+incremental: false
+highlighter: rouge
+gist:
+  noscript: false
