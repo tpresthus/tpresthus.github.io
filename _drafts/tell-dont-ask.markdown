@@ -11,7 +11,7 @@ less ambiguity in our interfaces.
 Object-oriented programming was meant to be objects sending each other messages. Today we know this as objects invoking methods on each
 other. I feel that many programmers have yet to grasp the idea of message-sending, which leads them to writing code like this:
 
-{% hightlight python %}
+{% highlight python %}
 condition = other_object.get_state()
 if condition.foo == "bar":
   other_object.do_this()
