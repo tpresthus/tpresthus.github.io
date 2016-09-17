@@ -175,7 +175,11 @@ void Main()
 }
 {% endhighlight %}
 
-Notice how the Autopilot now longer knows anything about transmission systems or how the steering works. It simply uses the dependencies that are controlled by the main loop. We have successfully inverted the control of our dependencies.
+Notice how the Autopilot no longer knows anything about transmission systems or how the steering works. It simply uses the dependencies that are controlled by the main loop. We have successfully inverted the control of our dependencies.
+
+Furthermore we've adhered to the Dependency Inversion Principle of not having details depend on other details. The Autopilot detail depends on three abstractions: ShifterService, SteeringService and BlinkerService. ShifterService uses an IShifter (remember?) which we construct as an EightSpeedTransmission detail in our composition root. The same goes for the SteeringService.
+
+Wait. Did I just say composition root? What's that? Read on to find out (or google it).
 
 ## Dependency Injection
 
