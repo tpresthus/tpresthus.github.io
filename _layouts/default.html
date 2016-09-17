@@ -1,56 +1,30 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>{{ page.title }}</title>
-        <meta name="viewport" content="width=device-width">
+---
+---
 
-	<link href="http://fonts.googleapis.com/css?family=Merriweather:400,700|Ubuntu:400" rel="stylesheet">
-	<link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml" />
+{% include base_path %}
 
-        <!-- syntax highlighting CSS -->
-        <link rel="stylesheet" href="/css/syntax.css">
+<!doctype html>
+<html lang="{{ site.locale | slice: 0,2 | default: "en" }}" class="no-js">
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+  </head>
 
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="/css/main.css">
+  <body class="layout--{{ page.layout | default: layout.layout }}{% if page.classes or layout.classes %}{{ page.classes | default: layout.classes | join: ' ' | prepend: ' ' }}{% endif %}">
 
-    </head>
-    <body>
+    {% include browser-upgrade.html %}
+    {% include masthead.html %}
 
-        <div class="site">
-          <div class="header">
-            <h1 class="title"><a href="/">{{ site.name }}</a></h1>
-            <span>- by Thomas Presthus</span>
-            <a class="extra" href="/">home</a>
-          </div>
+    {{ content }}
 
-          {{ content }}
+    <div class="page__footer">
+      <footer>
+        {% include footer/custom.html %}
+        {% include footer.html %}
+      </footer>
+    </div>
 
-          <div class="footer">
-            <div class="contact">
-              <p>
-                Thomas Presthus<br />
-                Consultant and owner, Erus Encodia AS<br />
-                thomas@encodia.no
-              </p>
-            </div>
-            <div class="contact">
-              <p>
-                <a href="https://twitter.com/presthus">twitter.com/presthus</a><br />
-              </p>
-            </div>
-          </div>
-        </div>
+    {% include scripts.html %}
 
-        <script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
- (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
- m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
- })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-49003104-1', 'ballofcode.com');
-ga('send', 'pageview');
-        </script>
-    </body>
+  </body>
 </html>

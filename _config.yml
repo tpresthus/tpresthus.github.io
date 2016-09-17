@@ -1,6 +1,14 @@
-name: Big Ball of Code
-description: Thomas Presthus' Big Ball of Code Blog
-url: http://www.ballofcode.com
+locale: "en"
+title: "Big Ball of Code"
+title_separator: "-"
+name: "Big Ball of Code"
+description: "Thomas Presthus' Big Ball of Code Blog"
+url: "http://www.ballofcode.com"
+words_per_minute: 200
+comments:
+    provider: "disqus"
+    disqus:
+        shortname: "ballofcode"
 markdown: kramdown
 lsi: false
 safe: true

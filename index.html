@@ -1,16 +1,14 @@
 ---
-layout: default
-title: Big Ball of Code by Thomas Presthus
+layout: archive
+author_profile: true
 ---
 
-<div id="home">
-  <ul class="posts">
-    {% for post in site.posts %}
-    <li>
-      <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-      <span>{{ post.date | date_to_string }}</span> 
-      <p class="summary">{{ post.excerpt }}</p>
-    </li>
-    {% endfor %}
-  </ul>
-</div>
+{% include base_path %}
+
+<h3 class="archive__subtitle">{{ site.data.ui-text[site.locale].recent_posts | default: "Recent Posts" }}</h3>
+
+{% for post in paginator.posts %}
+  {% include archive-single.html %}
+{% endfor %}
+
+{% include paginator.html %}
