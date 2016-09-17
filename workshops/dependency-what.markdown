@@ -99,8 +99,88 @@ We could, of course, have made our Driver depend directly on the EightSpeedTrans
 >
 > Implement the above type system in your favorite language
 
-That about wraps up the chapter on Dependency Inversion Principle. This far we've learned that it's in fact a very simple principle that helps us create modularized and loosely coupled code by not having details depend on details.
+That about wraps up the introductory chapter on Dependency Inversion Principle. This far we've learned that it's in fact a very simple principle that helps us create modularized and loosely coupled code by not having details depend on details.
 
 ## Inversion of Control
+
+We've talked about the inversion of *dependencies*. Now we're going to have a look at the inversion of *control* (whatever that means, right?).
+
+I personally think the main reason that developers struggle with DIP, DI, IoC and containers is that the naming of these concepts are so similar. I mean; Dependency *Inversion*, *Inversion of Control*, *Dependency* Injection. It all seems to overlap. I've talked to developers who thinks Dependency Inversion requires Inversion of Control Containers, or that Dependency Inversion and Dependency Injection are the same things. And aren't Inversion of Control the same as containers?
+
+We'll come back to the container later, and focus on Inversion of Control as a pattern.
+
+When writing code, we traditionally let the consumer of a component call it - thus being in control. This isn't necessarily a Bad Thing™, but it's all about how we do it.
+
+Consider the following example:
+
+{% highlight csharp %}
+
+class Autopilot
+{
+    // Attempt to overtake the next car
+    // by signalling a turn, shifting to a lower gear
+    // and turning left (hoping that we're not in Britain)
+    public async void Overtake()
+    {
+        var blinker = new BlinkerService();
+
+        using(blinker.SignalLeft())
+        {
+            var shifter = new ShifterService(new EightSpeedTransmission());
+            await shifter.GearDown();
+
+            var steering = new SteeringService(new ServoBasedSteering());
+            await steering.TurnLeft();
+        }
+    }
+}
+{% endhighlight %}
+
+While the code is simple, it hides three major dependencies:
+
+  - Shifter
+  - Blinker
+  - Steering
+
+This makes it hard to compose this component together with the rest of our car, since as a caller we have no idea of which dependencies will be used. It also makes it harder to test.
+
+Another problem with the code is that the Autopilot is now made responsible for both creating and maintaining the life-cycle of these depencies. We could call this classical Control (with no inversion).
+
+Utilising Inversion of Control, we'll invert the control chain, releiving the Autopilot from the responsibility of maintaing the life-cycle for these dependencies.
+
+There are several ways we can do this. For now, we'll use the **Service Locator** pattern. Please note that this is considered an [anti-pattern](http://blog.ploeh.dk/2010/02/03/ServiceLocatorisanAnti-Pattern/) - we will explore better alternatives a little later.
+
+Instead of re-iterating the mechanics of the Service Locator, I'll leave it as an excercise for you to read about it [here](http://martinfowler.com/articles/injection.html#UsingAServiceLocator).
+
+> ### Excercise
+>
+> Try refactoring the above code into using a Service Locator.
+> You can mock out the Service Locator implementation to make
+> it easier for yourself.
+> 
+> You could end up with something like [this](https://gist.github.com/tpresthus/4854f319e91d72167dc8616e0b69de42).
+
+To use the Autopilot, we can now do this:
+
+{% highlight csharp %}
+
+void Main()
+{
+    ShifterService.Current = new ShifterService(new EightSpeedTransmission());
+    SteeringService.Current = new SteeringService(new ServoBasedSteering());
+    BlinkerService.Current = new BlinkerService();
+
+    var autopilot = new Autopilot();
+    autopilot.Overtake().ConfigureAwait(false);
+}
+{% endhighlight %}
+
+Notice how the Autopilot now longer knows anything about transmission systems or how the steering works. It simply uses the dependencies that are controlled by the main loop. We have successfully inverted the control of our dependencies.
+
+## Dependency Injection
+
+Did you think we're finished with dependencies yet? Nope. This is where we shake it up by adding to the confusion of acronyms. We'lve talked about **DIP**, and now we're gonna look at **DI: Dependency Injection**.
+
+As we've already seen, Dependency Inversion is about separating implementation details and abstractions. So what is Dependency Injection?
 
 
