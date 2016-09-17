@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "Writing a micro service in Java with Dropwizard"
 date:   2014-01-26 17:23:00
 categories: micro-service java dropwizard
