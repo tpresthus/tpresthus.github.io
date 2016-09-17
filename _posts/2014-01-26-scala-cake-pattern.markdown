@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "The Cake Pattern"
 date:   2014-01-26 17:23:00
 categories: scala ioc cake-pattern

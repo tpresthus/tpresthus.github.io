@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "First post!"
 date:   2013-12-21 12:45:45
 categories: blog

@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "Breaking the monolith - without microservices"
 date:   2016-06-20 12:00:00
 categories: micro-service talk structuring-monoliths

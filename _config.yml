@@ -5,14 +5,78 @@ name: "Big Ball of Code"
 description: "Thomas Presthus' Big Ball of Code Blog"
 url: "http://www.ballofcode.com"
 words_per_minute: 200
+
+author:
+  name: "Thomas Presthus"
+  avatar: "thomas.jpg"
+  bio: "Consultant and owner, Erus Encodia AS"
+  location: "Norway"
+  email: "thomas@encodia.no"
+  twitter: "presthus"
+
 comments:
     provider: "disqus"
     disqus:
         shortname: "ballofcode"
-markdown: kramdown
-lsi: false
+
 safe: true
-incremental: false
-highlighter: rouge
 gist:
   noscript: false
+
+defaults:
+    # _posts
+    - scope:
+        path: ""
+        type: posts
+      values:
+        layout: single
+        read_time: true
+        comments: true
+        share: true
+        related: true
+
+include:
+  - .htaccess
+  - _pages
+encoding: "utf-8"
+markdown_ext: "markdown,mkdown,mkdn,mkd,md"
+
+markdown: kramdown
+highlighter: rouge
+lsi: false
+excerpt_separator: "\n\n"
+incremental: false
+
+kramdown:
+    input: GFM
+    hard_wrap: false
+    auto_ids: true
+    footnote_nr: 1
+    entity_output: as_char
+    toc_levels: 1..6
+    smart_quotes: lsquo,rsquo,ldquo,rdquo
+    enable_coderay: false
+
+sass:
+    sass_dir: _sass
+    style: compressed
+
+permalink: /:categories/:year/:month/:day/:title.html
+paginate: 5
+paginate_path: /page:num/
+timezone: Europe/Oslo
+
+gems:
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jemoji
+
+whitelist:
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jemoji
+

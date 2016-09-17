@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "Tell, don't ask!"
 date:   2016-03-23 22:00:00
 categories: principles craftmanship coding

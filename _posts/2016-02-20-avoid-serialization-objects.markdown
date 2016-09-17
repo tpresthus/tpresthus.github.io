@@ -1,5 +1,4 @@
 ---
-layout: post
 title: "Avoid serialization objects"
 date: "2016-02-20 20:00:12 +0100"
 categories: DDD boundaries serialization

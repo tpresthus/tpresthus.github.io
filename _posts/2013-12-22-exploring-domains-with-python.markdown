@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  "Exploring domains with python"
 date:   2013-12-22 17:19:00
 categories: python domain-driven-design
