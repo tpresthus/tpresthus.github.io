@@ -4,4 +4,9 @@ date:   2016-09-17 12:00:00
 categories: blog
 ---
 
-About time to give the blog a facelift.
+Music has always been a passion for me, and I play a lot of it myself. As a gitarist, pianist, drummer and bassist I naturally have a lot of instruments (probably too many, to be honest). My instruments are of varying quality and price classes. When starting out playing something it's tempting to buy something cheap in case you find you don't like playing. This can be deceiving, though. Cheap instruments are more than often of a low quality. Playing a low quality instrument can be fun in the very beginning, but since it's generally harder to make them sound good it soon becomes demotivating to play them.
+
+I think maybe it's the same with this blog. When I first created it I settled on using Jekyll and quickly threw together a layout that I figured would work. It was, however, not pretty. And to be frank, it's kind of been keeping me from writing.
+
+So now I've taken the step to give the blog a facelift. Instead of hacking together a new theme myself, I've gone for the excellent and open-source [Minimal Mistakes Theme](https://mmistakes.github.io/minimal-mistakes/).
+
