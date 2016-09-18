@@ -310,4 +310,19 @@ It compiles and works. So by using constructor-based injection we get more safet
 > Refactor our Autopilot class from using setter-based injection to
 > using constructor-based injection.
 
+This far we've seen how we can invert the control of dependencies through the Service Locator and Dependency Injection patterns. As you can see, Dependency Injection makes our code less tangled and easier to reason about. We've also implicity seen how dependencies are controlled in what I called a composition root.
+
+## Composition root
+
+So what is this composition root that I talk about? While it's totally unrelated to the **DIP**, it becomes quite important when utilising Inversion of Control.
+
+The composition root is basicly where you wire up your application. It's where we control the creation and life-cycle of our dependencies and components.
+
+In the examples above we've used the Main() method to wire everything up, and this is not a coincedence. When creating applications, the main loop is usually the entry point to our application, and thus the point of our stack that has access to all the dependencies. It's also a natural place to *compose* our application.
+
+When using some frameworks, however, we don't have access to the main loop in the same way. This can be frameworks like WPF, ASP.NET, etc.
+
+Those frameworks usually offer other means to wiring up the system, though, and it's become increasingly popular to embrace this using an IoC container.
+
+## Inversion of Control containers
 
