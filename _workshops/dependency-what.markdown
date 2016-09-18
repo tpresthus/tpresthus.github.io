@@ -183,8 +183,131 @@ Wait. Did I just say composition root? What's that? Read on to find out (or goog
 
 ## Dependency Injection
 
-Did you think we're finished with dependencies yet? Nope. This is where we shake it up by adding to the confusion of acronyms. We'lve talked about **DIP**, and now we're gonna look at **DI: Dependency Injection**.
+Did you think we were finished with dependencies yet? Nope. This is where we shake it up by adding to the confusion of acronyms. We'lve talked about **DIP**, and now we're gonna look at **DI: Dependency Injection**. Finally a term without *Inversion* in it!
 
-As we've already seen, Dependency Inversion is about separating implementation details and abstractions. So what is Dependency Injection?
+As we've already seen, Dependency Inversion is about separating implementation details and abstractions. Inversion of Control is about inverting the control and life-cycle management of dependencies. So what is Dependency Injection?
+
+Simply put, Dependency Injection is a pattern and a means to achieving Inversion of Control. In the previous chapter, we implemented IoC by using the Service Locator pattern. This is, however, considered an anti-pattern since it hides the dependencies of a component.
+
+Imagine that someone else wanted to use the Autopilot we created. They'd probably start with:
+
+{% highlight csharp %}
+void Drive()
+{
+    var autopilot = new Autopilot();
+    autopilot.Overtake();
+}
+{% endhighlight %}
+
+It would compile nicely, but when they run their method it would crash and burn. Why? Because they didn't initialize the required dependencies in the Service Locator. In order to get it running, they would have to open the source of the Autopilot class and walk through every single line to find its dependencies.
+
+This should not be necessary. Instead we should strive to both let the Autopilot signal to its consumers what it needs to work, and also have the compiler not accept code that won't run.
+
+Dependency Injection is all about *injecting* our dependencies into the component that needs them. In object-oriented languages we have primarily two approaches to implementing Dependency Injection: Constructor-based injection and setter-based injection.
+
+### Setter-based injection
+
+In C# this is also known as property-based injection. Consider the following example:
+
+{% highlight csharp %}
+
+class Component
+{
+    public FooDependency FooDependency { get; set; }
+    public BarDependency BarDependency { get; set; }
+
+    public void DoSomething()
+    {
+        var fooValue = FooDependency.CalculateValue();
+        BarDependency.Send(fooValue);
+    }
+}
+{% endhighlight %}
+
+Instead of having our code call out to a common service locator, we now state that we have two dependencies (FooDependency and BarDependency) that should be initialized from the outside like this:
+
+{% highlight csharp %}
+void Main()
+{
+    var foo = new FooDependency();
+    var bar = new BarDependency();
+
+    var component = new Component
+    {
+        FooDependency = foo,
+        BarDependency = bar
+    };
+
+    component.DoSomething();
+}
+{% endhighlight %}
+
+By doing this, we inject the dependencies into our component instead of having the component reach out to a global service locator. We also adhere to the **DIP**. When we're writing tests for our component it's also easier to inject the dependencies instead of setting up a service locator.
+
+> ### Excercise
+>
+> Try refactoring the Autopilot class to use setter-based dependency injection
+> instead of a Service Locator
+
+It doesn't really feel well, though. Our compiler will still accept the code if we were to construct a new Component without setting the dependency properties, which leads us back to the developer having to open the source code and locating the dependencies.
+
+### Constructor-based injection
+
+We want to make the dependencies of our Component explicit, and have the compiler reject our code if we don't inject the required dependencies. This can be achieved with constructor-based injection.
+
+Instead of declaring our dependencies as properties, we will now add a constructor and declare our dependencies to the component:
+
+{% highlight csharp %}
+
+class Component
+{
+    private readonly FooDependency _fooDependency;
+    private readonly BarDependency _barDependency;
+
+    public Component(FooDependency foo, BarDependency bar)
+    {
+        _fooDependency = foo;
+        _barDependency = bar;
+    }
+
+    public void DoSomething()
+    {
+        var fooValue = _fooDependency.CalculateValue();
+        _barDependency.Send(fooValue);
+    }
+}
+{% endhighlight %}
+
+If we naively now try to use this component:
+
+{% highlight csharp %}
+void Main()
+{
+    var component = new Component();
+
+    component.DoSomething();
+}
+{% endhighlight %}
+
+The compiler will reject our code, since we don't fulfill the requirements of the Component's constructor. Thank to Intellisense, and its likes, we probably know this before trying to compile. So we alter our code to this:
+
+{% highlight csharp %}
+void Main()
+{
+    var foo = new FooDependency();
+    var bar = new BarDependency();
+
+    var component = new Component(foo, bar);
+
+    component.DoSomething();
+}
+{% endhighlight %}
+
+It compiles and works. So by using constructor-based injection we get more safety by instructing the compiler to reject our code when dependency requirements are not met, but we also make the code less ambiguous and easier to use.
+
+> ### Excercise
+>
+> Refactor our Autopilot class from using setter-based injection to
+> using constructor-based injection.
 
 
