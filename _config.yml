@@ -23,6 +23,11 @@ safe: true
 gist:
   noscript: false
 
+collections:
+    workshops:
+        output: true
+        permalink: /workshops/:path.html
+
 defaults:
     # _posts
     - scope:
@@ -34,6 +39,15 @@ defaults:
         comments: true
         share: true
         related: true
+    - scope:
+        path: ""
+        type: workshops
+      values:
+        layout: single
+        read_time: false
+        comments: false
+        share: true
+        related: false
 
 analytics:
     provider: "google"
