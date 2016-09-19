@@ -1,6 +1,9 @@
 ---
 title: "Dependency What?"
 layout: single
+header:
+  image: dependency-what/munich.jpg
+  caption: "Photo by: **Mariano Mantel** under Creative Commons [CC BY-NC 2.0](https://creativecommons.org/licenses/by-nc/2.0/legalcode)"
 ---
 
 Welcome to the *Dependency What?* workshop. My name is Thomas Presthus, and I've been working as a consultant doing software development and architecture for the past ten years.
