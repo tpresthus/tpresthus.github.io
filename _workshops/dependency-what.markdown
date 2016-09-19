@@ -419,3 +419,42 @@ If you find that a container will ease your job, or that you'll have to use one 
 container to your composition root. Do not (and I repeat; **do not**) pass the container instance along down your
 graph of dependency. Doing so will actually degrade the container to a glorified Service Locator (which, as we remember, is
 an anti-pattern).
+
+## Wrapping up
+
+First of all; thank you for following me this far. I hope you've had fun and maybe learned something new. I'll try to summarize
+quickly what we've learned today.
+
+Dependency Inversion Principle, Dependency Injection, Inversion of Control and IoC containers are different things, some of them 
+even orthogonal.
+
+### Dependency Inversion Principle
+
+Abstractions should not depend on details. Details should not depend on other details.
+
+This keeps our dependency graph untangled and tidy. It also gives us looser coupling and better separation
+between abstractions and details while helping us to discover actual and good abstractions.
+
+### Inversion of Control
+
+Dependency management is done by the code that calls you, instead of you.
+
+By inverting the call chain we gain more structure and top-down control of our components instead of hiding dependencies
+and tangling code.
+
+### Dependency Injection
+
+Dependency Injection is simply a pattern and tactical approach to achieving Inversion of Control by injecting
+dependencies into components that need them.
+
+### IoC containers
+
+Simple containers that can help us manage the creation and life-cycle management of dependencies. They make it easier
+to resolve complex dependency graphs.
+
+## Thank you
+
+I appreciate any feedback or comments you may have -- be it criticism, problems, input or anything else. Please reach out to me
+on [Twitter @presthus](https://twitter.com/presthus) or by [email](mailto:thomas@encodia.no).
+
+Thank you to NNUG Vestfold for hosting this meetup and workshop.
