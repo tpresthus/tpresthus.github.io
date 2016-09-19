@@ -55,7 +55,7 @@ interface IClient
 
 Interfaces in C# are one kind of abstractions. They define an interface that other types can implement, and thus signal their supported operations to their consumers.
 
-Is the above code a good abstraction though? While, yes, it's an interface and not a concrete implementation, it seems to offer nor abstraction. It's rather a means of indirection.
+Is the above code a good abstraction though? While, yes, it's an interface and not a concrete implementation, it seems to offer no abstraction. It's rather a means of indirection.
 
 So what would we consider a good abstraction? We would have to abstract something away, right? Let me give you an example.
 
@@ -107,7 +107,7 @@ We've talked about the inversion of *dependencies*. Now we're going to have a lo
 
 I personally think the main reason that developers struggle with DIP, DI, IoC and containers is that the naming of these concepts are so similar. I mean; Dependency *Inversion*, *Inversion of Control*, *Dependency* Injection. It all seems to overlap. I've talked to developers who thinks Dependency Inversion requires Inversion of Control Containers, or that Dependency Inversion and Dependency Injection are the same things. And aren't Inversion of Control the same as containers?
 
-We'll come back to the container later, and focus on Inversion of Control as a pattern.
+We'll come back to the container later, and focus on Inversion of Control as a principle.
 
 When writing code, we traditionally let the consumer of a component call it - thus being in control. This isn't necessarily a Bad Thing™, but it's all about how we do it.
 
@@ -326,3 +326,96 @@ Those frameworks usually offer other means to wiring up the system, though, and 
 
 ## Inversion of Control containers
 
+I personally think that IoC containers have participated, at least somewhat, to the confusion regarding **DIP**, **DI** and **IoC**. They have been forced down our throats by frameworks, and they've been marketed as "must-haves".
+
+We will, however, take an introductory look at containers and how they can be leveraged, before touching upon how not to use them.
+
+Looking back at the code we wrote when experimenting with Dependency Injection, we can easily imagine our composition root growing big and hairy. Most of the code residing in the composition root will probably concentrate on constructing components and managing their life-cycles too. Sounds repetitive and error-prone.
+
+This is one of the reasons that IoC containers started to appear. Here are some well-known containers in the .NET world:
+
+ - [StructureMap](http://structuremap.github.io/)
+ - [Spring.NET](http://springframework.net/) Application Context
+ - [Castle Windsor](http://www.castleproject.org/projects/windsor/)
+ - [Autofac](https://autofac.org/)
+ - [TinyIoC](https://github.com/grumpydev/TinyIoC)
+ - [Unity](https://github.com/unitycontainer/unity)
+
+And these are not the only ones. They all have some differing semantics and mechanisms, but they all try to solve the same problem: Making it easier to adhere to IoC and resolve dependencies.
+
+Go ahead and follow some of the links and read a little about a couple of the containers I mentioned. I recommend reading about StructureMap (the first open-source container for .NET) and Unity (which comes from the Microsoft Patterns and Practices team and is widely used in Microsoft products).
+
+I'll choose to use StructureMap to demonstrate some of the common features of containers. We'll start by using explicit registrations and build up our Component and its Foo- and BarDependencies.
+
+Before that, though, we'll install StructureMap through NuGet:
+
+> PM> **Install-Package structuremap**
+
+{% highlight csharp %}
+void Main()
+{
+    var container = new Container(_ =>
+    {
+        _.For<IFooDependency>().Use<FooDependency>();
+        _.For<IBarDependency>().Use<BarDependency>();
+    });
+
+    var component = container.GetInstance<Component>();
+
+    component.DoSomething();
+}
+{% endhighlight %}
+
+This doesn't really look like any less code. Notice that we no longer construct the Component ourself, but rather delegate to the container to resolve it for us.
+
+To be honest, the small example doesn't really do the container justice. Imagine that we had several components and more than two dependencies, perhaps a complete graph of dependencies. That's where containers come in handy.
+
+> ### Excercise
+>
+> Replace the manual wiring of Autopilot and its dependencies
+> with a container, using explicit registration of components
+
+Container can help us write less too. Some of them offer quite sophisticated mechanisms for scanning and automatically registering components. Let's see how we can do it with StructureMap:
+
+{% highlight csharp %}
+void Main()
+{
+    var container = new Container(_ =>
+    {
+        _Scan(x =>
+        {
+            x.TheCallingAssembly();
+            x.WithDefaultConventions();
+        });
+    });
+
+    var component = container.GetInstance<Component>();
+
+    component.DoSomething();
+}
+{% endhighlight %}
+
+At this point we're no longer telling StructureMap which components to be used. We're only telling it to scan the calling assembly for all types, and when resolving Component it will inspect the constructor to see that it needs an IFooDependency and an IBarDependency. It will then look at all its registered types and find the ones that match our constructor.
+
+With such few dependencies the amount of code is about the same, but it's easy to imagine how much code we can omit when having just a few more components. 
+
+Another benefit is that we can easier refactor the constructors of our dependencies, since the container will resolve them through introspection.
+
+> ### Excercise
+>
+> Refactor our container based Autopilot main loop to 
+> automatically scan for components instead of registering 
+> them manually
+
+### Here be dragons
+
+I know that containers are starting to look really nice by now. All that code we won't have to write! 
+A word of advice: Be careful. Containers are really good at resolving complex graphs of dependencies, but they
+come with the cost of added complexity in the form of indirection and magic. When we have multiple implementations of
+our abstractions, different conventions and perhaps even XML-based configuration of the container, it becomes increasingly
+hard to find out how dependencies will actually be resolved.
+
+If you find that a container will ease your job, or that you'll have to use one because of a framework, please confine the
+container to your composition root. Do not (and I repeat; **do not**) pass the container instance along down your
+graph of dependency. Doing so will actually degrade the container to a glorified Service Locator (which, as we remember, is
+an anti-pattern).
