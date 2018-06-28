@@ -1,5 +1,5 @@
 ---
-title:  "Breaking the monolith - without microservices"
+title:  "Cleaning up an unwieldy monolith without using microservices"
 date:   2018-06-01 12:00:00
 categories: micro-service talk cleaning-up-monliths ddd
 header:
