@@ -79,3 +79,22 @@ I usually find that shorter sprints are good when starting a new project, and
 longer sprints fit better as the project matures. But again, it depends. And the
 only way to find out is to experiment. And **evaluate**. This is what you do during
 the retro!
+
+> We had daily standups, but they felt like a waste of time since we talk to
+> each other all the time during the work day.
+
+Daily SCRUM, or standups, are great catalizators for communication. Many teams
+depend on them for their coordination and communication - especially if the team is
+distributed. But some teams communicate perfectly well without a standup. So
+should you keep doing standups? It depends. Experiment. **Evaluate**. This is what
+you do during the retro!
+
+> And so on
+
+Suffice to say, the retrospective is about feedback on the sprint and process itself,
+as opposed to feedback on the product and functionality we're building.
+
+### Back on track
+
+Now that we have a shared understanding of what the retrospective is, let's explore
+what happens when we skip it.
