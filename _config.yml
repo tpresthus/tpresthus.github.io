@@ -3,7 +3,7 @@ title: "Big Ball of Code"
 title_separator: "-"
 name: "Big Ball of Code"
 description: "Thomas Presthus' Big Ball of Code Blog"
-url: "http://www.ballofcode.com"
+url: "https://www.ballofcode.com"
 words_per_minute: 200
 
 author:
@@ -11,7 +11,7 @@ author:
   avatar: "thomas.jpg"
   bio: "Consultant and owner, Erus Encodia AS"
   location: "Norway"
-  email: "thomas@encodia.no"
+  email: "thomas@erus.no"
   twitter: "presthus"
 
 comments:
